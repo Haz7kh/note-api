@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 
 // Connect to DB
 mongoose
-  .connect("mongodb://localhost/note-taking-api", {
+  .connect("mongodb+srv://khalmelhem:123321Kh@cluster0.xg4a801.mongodb.net/", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
