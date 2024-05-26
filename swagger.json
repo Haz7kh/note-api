@@ -1,0 +1,237 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Swing Notes API",
+    "version": "1.0.0",
+    "description": "API for managing notes"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "notes",
+      "description": "Operations about notes"
+    },
+    {
+      "name": "user",
+      "description": "Operations about user"
+    }
+  ],
+  "paths": {
+    "/api/notes": {
+      "get": {
+        "tags": ["notes"],
+        "summary": "Get all notes",
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "500": {
+            "description": "internal server error"
+          }
+        }
+      },
+      "post": {
+        "tags": ["notes"],
+        "summary": "Create a new note",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "note",
+            "description": "Note object",
+            "schema": {
+              "$ref": "#/definitions/Note"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "note created"
+          },
+          "400": {
+            "description": "bad request"
+          }
+        }
+      }
+    },
+    "/api/notes/{id}": {
+      "get": {
+        "tags": ["notes"],
+        "summary": "Get a note by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "404": {
+            "description": "note not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["notes"],
+        "summary": "Update a note by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "note",
+            "description": "Note object",
+            "schema": {
+              "$ref": "#/definitions/Note"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "note updated"
+          },
+          "400": {
+            "description": "bad request"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["notes"],
+        "summary": "Delete a note by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "note deleted"
+          },
+          "404": {
+            "description": "note not found"
+          }
+        }
+      }
+    },
+    "/api/notes/search": {
+      "get": {
+        "tags": ["notes"],
+        "summary": "Search notes by title",
+        "parameters": [
+          {
+            "name": "title",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "500": {
+            "description": "internal server error"
+          }
+        }
+      }
+    },
+    "/api/user/signup": {
+      "post": {
+        "tags": ["user"],
+        "summary": "Sign up a new user",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "User object",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "user created"
+          },
+          "400": {
+            "description": "bad request"
+          }
+        }
+      }
+    },
+    "/api/user/login": {
+      "post": {
+        "tags": ["user"],
+        "summary": "Login a user",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "User object",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "user logged in"
+          },
+          "400": {
+            "description": "invalid username or password"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Note": {
+      "type": "object",
+      "required": ["title", "text"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 50
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "modifiedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "required": ["username", "password"],
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

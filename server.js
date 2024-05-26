@@ -3,13 +3,15 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger.json");
 const Note = require("./models/Note");
 const User = require("./models/User");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middlewae
+// Middleware
 app.use(bodyParser.json());
 
 // Connect to DB
@@ -25,7 +27,9 @@ mongoose
     console.error("Error connecting to MongoDB:", error);
   });
 
-// Routes
+// Swagger setup
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 // User Signup
 app.post("/api/user/signup", async (req, res) => {
   try {
@@ -38,6 +42,7 @@ app.post("/api/user/signup", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
 // User Login
 app.post("/api/user/login", async (req, res) => {
   try {
@@ -72,13 +77,13 @@ function authenticateUser(req, res, next) {
   }
 }
 
-// home route
+// Home route
 app.get("/", (req, res) => {
   res.send("Welcome to Note Taking API");
 });
 
 // Get all notes
-app.get("/api/notes", async (req, res) => {
+app.get("/api/notes", authenticateUser, async (req, res) => {
   try {
     const notes = await Note.find();
     res.json(notes);
@@ -88,12 +93,12 @@ app.get("/api/notes", async (req, res) => {
 });
 
 // Get a single note
-app.get("/api/notes/:id", getNote, (req, res) => {
+app.get("/api/notes/:id", authenticateUser, getNote, (req, res) => {
   res.json(res.note);
 });
 
 // Create a note
-app.post("/api/notes", async (req, res) => {
+app.post("/api/notes", authenticateUser, async (req, res) => {
   const note = new Note({
     title: req.body.title,
     text: req.body.text,
@@ -108,7 +113,7 @@ app.post("/api/notes", async (req, res) => {
 });
 
 // Update a note
-app.put("/api/notes/:id", getNote, async (req, res) => {
+app.put("/api/notes/:id", authenticateUser, getNote, async (req, res) => {
   if (req.body.title != null) {
     res.note.title = req.body.title;
   }
@@ -126,7 +131,7 @@ app.put("/api/notes/:id", getNote, async (req, res) => {
 });
 
 // Delete a note
-app.delete("/api/notes/:id", getNote, async (req, res) => {
+app.delete("/api/notes/:id", authenticateUser, getNote, async (req, res) => {
   try {
     await res.note.remove();
     res.json({ message: "Note deleted" });
